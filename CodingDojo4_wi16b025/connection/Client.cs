@@ -10,7 +10,7 @@ namespace CodingDojo4_wi16b025.connection
 {
     class Client
     {
-        byte[] buffer = new byte[512];
+        byte[] buffer = new byte[1024];
         Socket clientSocket;
         Action<string> MessageInformer;
         Action AbortInformer; 
@@ -40,7 +40,7 @@ namespace CodingDojo4_wi16b025.connection
         private void Receive()
         {
             string message = ""; 
-            while(message != "@quit")
+            while(!message.Contains("@quit"))
             {
                 int length = clientSocket.Receive(buffer);
                 message = Encoding.UTF8.GetString(buffer, 0, length);

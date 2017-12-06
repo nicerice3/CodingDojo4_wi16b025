@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CodingDojo4_wi16b025"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="525" DataContext="{Binding Main, Mode=OneWay, Source={StaticResource Locator}}">
+        
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="47.9"/>
@@ -25,7 +26,7 @@
         </StackPanel>
 
         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,30,0">
-            <Button Content="Connect" Height="20" Width="150"/>
+            <Button Content="Connect" Height="20" Width="150" Command="{Binding ConnectBtnClicked}"  />
         </StackPanel>
         </Grid>
         

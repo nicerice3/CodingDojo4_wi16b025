@@ -1,34 +1,66 @@
+using CodingDojo4_wi16b025.connection;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
+using System;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace CodingDojo4_wi16b025.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// You can also use Blend to data bind with the tool's support.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
+    
     public class MainViewModel : ViewModelBase
     {
-        /// <summary>
-        /// Initializes a new instance of the MainViewModel class.
-        /// </summary>
+        
+        public bool isConnected = true;
+        private Client clientcommunication; 
+
+        public string Message { get; private set; }
+        public string ChatName { get; set; }
+        public ObservableCollection<string> MessageReceived { get; set; }
+        public RelayCommand ConnectBtnClicked { get; set; }
+        public RelayCommand SendBtnClicked { get; set; }
+
         public MainViewModel()
         {
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real"
-            ////}
+
+            Message = "";
+            MessageReceived = new ObservableCollection<string>();
+
+            ConnectBtnClicked = new RelayCommand(
+                () =>
+                    {
+                        isConnected = true;
+                        //neuen Client anlegen mit IP, Port, Action -> Nachricht gesendet , Action Abbruch
+                        clientcommunication = new Client("127.0.0.1", 81, new Action<string>(NewMessageIncoming), ClientDisconnect);
+                    }
+
+                );
+
+
+            SendBtnClicked = new RelayCommand(
+                () =>
+                {
+                    clientcommunication.Send(ChatName +": " + Message);
+                });
+        }
+
+        private void ClientDisconnect()
+        {
+            isConnected = false;
+            //update forcen
+            CommandManager.InvalidateRequerySuggested();
+
+        }
+
+        private void NewMessageIncoming(string message)
+        {
+            //Applikation des Objektes + sync thread Action + der assoziierte dispatcher.
+            App.Current.Dispatcher.Invoke(() =>
+                {
+                    //Nachrichten einschreiben
+                    MessageReceived.Add(message);
+                }
+                );
         }
     }
 }
