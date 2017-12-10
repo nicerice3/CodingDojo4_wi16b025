@@ -25,7 +25,7 @@ namespace CodingDojo4_Server.Communication
         {
             this.Clientsocket = socket;
             this.action = action;
-            //start receiving in a new thread
+            
             clientReceiveThread = new Thread(Receive);
             clientReceiveThread.Start();
         }
@@ -33,16 +33,16 @@ namespace CodingDojo4_Server.Communication
         private void Receive()
         {
             string message = "";
-            while (!message.Equals(endMessage))
+            while (!message.Contains(endMessage))
             {
                 int length = Clientsocket.Receive(buffer);
                 message = Encoding.UTF8.GetString(buffer, 0, length);
-                //set name property if not already done
+                
                 if (Name == null && message.Contains(":"))
                 {
                     Name = message.Split(':')[0];
                 }
-                //inform GUI via delegate
+                
                 action(message, Clientsocket);
             }
             Close();
@@ -55,9 +55,9 @@ namespace CodingDojo4_Server.Communication
 
         public void Close()
         {
-            Send(endMessage); //sends endmessage to client 
-            Clientsocket.Close(1); //disconnects
-            clientReceiveThread.Abort(); //abort client threads
+            Send(endMessage);  
+            Clientsocket.Close(1); 
+            clientReceiveThread.Abort(); 
         }
     }
 }
