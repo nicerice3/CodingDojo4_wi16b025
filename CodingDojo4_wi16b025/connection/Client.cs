@@ -14,6 +14,7 @@ namespace CodingDojo4_wi16b025.connection
         Socket clientSocket;
         Action<string> MessageInformer;
         Action AbortInformer; 
+        
         public Client (string ip, int port, Action<string> messageInformer, Action abortInformer) 
         {
             try

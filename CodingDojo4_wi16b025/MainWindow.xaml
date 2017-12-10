@@ -49,7 +49,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,20,0">
-            <Button Content="Send" Height="20" Width="200"/>
+            <Button Content="Send" Height="20" Width="200" Command="{Binding SendBtnClicked}" />
         </StackPanel>
         </Grid>
     </Grid>

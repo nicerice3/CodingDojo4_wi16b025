@@ -40,8 +40,13 @@ namespace CodingDojo4_wi16b025.ViewModel
             SendBtnClicked = new RelayCommand(
                 () =>
                 {
-                    clientcommunication.Send(ChatName +": " + Message);
-                });
+                    clientcommunication.Send(ChatName + ": " + Message);
+
+                    MessageReceived.Add("You: " + Message);
+                }, () =>
+                 {
+                     return (isConnected && Message.Length >= 1);
+                 });
         }
 
         private void ClientDisconnect()
