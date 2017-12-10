@@ -10,62 +10,55 @@ namespace CodingDojo4_wi16b025.ViewModel
     
     public class MainViewModel : ViewModelBase
     {
-        
-        public bool isConnected = true;
-        private Client clientcommunication; 
 
-        public string Message { get; private set; }
+        private Client clientcom;
+        private bool isConnected = false;
+
         public string ChatName { get; set; }
-        public ObservableCollection<string> MessageReceived { get; set; }
-        public RelayCommand ConnectBtnClicked { get; set; }
-        public RelayCommand SendBtnClicked { get; set; }
+        public string Message { get; set; }
+        public ObservableCollection<string> ReceivedMessages { get; set; }
+        public RelayCommand ConnectBtnClickCmd { get; set; }
+        public RelayCommand SendBtnClickCmd { get; set; }
 
         public MainViewModel()
         {
-
             Message = "";
-            MessageReceived = new ObservableCollection<string>();
-
-            ConnectBtnClicked = new RelayCommand(
-                () =>
-                    {
-                        isConnected = true;
-                        //neuen Client anlegen mit IP, Port, Action -> Nachricht gesendet , Action Abbruch
-                        clientcommunication = new Client("127.0.0.1", 81, new Action<string>(NewMessageIncoming), ClientDisconnect);
-                    }
-
-                );
-
-
-            SendBtnClicked = new RelayCommand(
+            ReceivedMessages = new ObservableCollection<string>();
+            
+            ConnectBtnClickCmd = new RelayCommand(
                 () =>
                 {
-                    clientcommunication.Send(ChatName + ": " + Message);
+                    isConnected = true;
+                    clientcom = new Client("127.0.0.1", 10100, new Action<string>(NewMessageReceived), ClientDissconnected);
 
-                    MessageReceived.Add("You: " + Message);
-                }, () =>
-                 {
-                     return (isConnected && Message.Length >= 1);
-                 });
+                },
+            () =>
+            {
+                return (!isConnected);
+            });
+            
+            SendBtnClickCmd = new RelayCommand(
+                () => {
+                    clientcom.Send(ChatName + ": " + Message);
+                    
+                    ReceivedMessages.Add("YOU: " + Message);
+                }, () => { return (isConnected && Message.Length >= 1); });
         }
 
-        private void ClientDisconnect()
+        private void ClientDissconnected()
         {
             isConnected = false;
-            //update forcen
+            
             CommandManager.InvalidateRequerySuggested();
-
         }
 
-        private void NewMessageIncoming(string message)
+        private void NewMessageReceived(string message)
         {
-            //Applikation des Objektes + sync thread Action + der assoziierte dispatcher.
+            
             App.Current.Dispatcher.Invoke(() =>
-                {
-                    //Nachrichten einschreiben
-                    MessageReceived.Add(message);
-                }
-                );
+            {
+                ReceivedMessages.Add(message);
+            });
         }
     }
 }
